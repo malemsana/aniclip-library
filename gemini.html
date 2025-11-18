@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Clip Library</title>
+    <!-- 1. Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles */
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Simple page navigation: hide all pages by default */
+        .page {
+            display: none;
+        }
+        /* Show the active page */
+        .page.active {
+            display: block;
+        }
+        
+        /* Custom blue glow effect for focus */
+        .focus-glow:focus-within {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            border-color: rgba(59, 130, 246, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+
+    <!-- ==== HEADER / NAVIGATION ==== -->
+    <header class="bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-700">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <a href="#" onclick="showPage('home-page')" class="text-2xl font-bold text-white">
+                <span class="text-blue-400">Anime</span>Clips
+            </a>
+            <button onclick="showPage('home-page')" class="text-gray-300 hover:text-white transition-colors">Home</button>
+        </nav>
+    </header>
+
+    <!-- ==== MAIN CONTENT AREA ==== -->
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- ======================================== -->
+        <!-- ==== PAGE 1: HOME (Default View) ==== -->
+        <!-- ======================================== -->
+        <div id="home-page" class="page active">
+            
+            <!-- Hero Section with Search -->
+            <section class="relative rounded-lg overflow-hidden mb-12">
+                <!-- Background Image Placeholder -->
+                <img src="https://placehold.co/1200x500/1a202c/73e8ff?text=Find+Your+Perfect+Clip" 
+                     alt="Anime compilation banner" 
+                     class="w-full h-64 sm:h-80 object-cover">
+                <div class="absolute inset-0 bg-black/60 flex flex-col justify-center items-center p-6 text-center">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4">Find Your Perfect Anime Clip</h1>
+                    <p class="text-lg text-gray-300 mb-8 max-w-2xl">The ultimate library for AMV makers and anime editors. Search and download high-quality clips.</p>
+                    
+                    <!-- Search Bar -->
+                    <div class="w-full max-w-xl bg-white/10 backdrop-blur-sm rounded-full p-2 flex items-center border border-gray-600 focus-glow transition-all">
+                        <input type="search" 
+                               id="search-input"
+                               onkeyup="handleSearch()"
+                               placeholder="Search for an anime (e.g., 'Jujutsu Kaisen')" 
+                               class="w-full bg-transparent text-white placeholder-gray-400 outline-none px-4 py-2">
+                        <button onclick="handleSearch()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full px-6 py-2 transition-colors">
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Popular Anime Grid -->
+            <section>
+                <h2 class="text-2xl font-bold text-white mb-6">Popular Anime</h2>
+                <div id="popular-anime-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <!-- Cards will be populated by mock data, but here's the structure -->
+                    <!-- 
+                    <div class="anime-card" data-title="Anime Title">
+                        <div class="bg-gray-800 rounded-lg overflow-hidden cursor-pointer shadow-lg hover:shadow-blue-400/20 hover:-translate-y-1 transition-all" onclick="showAnime('Anime Title')">
+                            <img src="https... (placeholder)" alt="Anime Title" class="w-full h-48 object-cover">
+                            <h3 class="font-semibold text-center p-3">Anime Title</h3>
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </section>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- ==== PAGE 2: EPISODE LIST ==== -->
+        <!-- ======================================== -->
+        <div id="episode-page" class="page">
+            <button onclick="showPage('home-page')" class="mb-6 inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Back to All Anime
+            </button>
+
+            <!-- Anime Details -->
+            <section class="flex flex-col md:flex-row gap-8 mb-12">
+                <img id="anime-poster" src="" alt="Anime Poster" class="w-full md:w-1/3 lg:w-1/4 h-auto object-cover rounded-lg shadow-lg">
+                <div class="flex-1">
+                    <h1 id="anime-title-header" class="text-4xl font-extrabold text-white mb-4"></h1>
+                    <p id="anime-description" class="text-gray-300 text-lg leading-relaxed"></p>
+                </div>
+            </section>
+
+            <!-- Episode List -->
+            <section>
+                <h2 class="text-2xl font-bold text-white mb-6">Select Episode</h2>
+                <div id="episode-list" class="space-y-3">
+                    <!-- Episode items will be populated by JS -->
+                    <!-- 
+                    <div class="bg-gray-800 p-4 rounded-lg flex justify-between items-center cursor-pointer hover:bg-gray-700 transition-colors" onclick="showClips('Anime Title', 1)">
+                        <span class="text-lg font-medium">Episode 1: Title of Episode</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </div> 
+                    -->
+                </div>
+            </section>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- ==== PAGE 3: CLIPS LIST ==== -->
+        <!-- ======================================== -->
+        <div id="clips-page" class="page">
+            <button onclick="showPage('episode-page')" class="mb-6 inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Back to Episodes
+            </button>
+
+            <h1 id="clip-page-title" class="text-3xl font-bold text-white mb-8"></h1>
+
+            <!-- Clips Grid -->
+            <div id="clips-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Clip cards will be populated by JS -->
+                <!-- 
+                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                    <img src="https... (placeholder)" alt="Clip thumbnail" class="w-full h-40 object-cover">
+                    <div class="p-4">
+                        <p class="text-gray-300 mb-4">Timestamp: 01:15 - 01:30</p>
+                        <a href="#" download class="w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-block">
+                            Download Clip
+                        </a>
+                    </div>
+                </div>
+                -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==== FOOTER ==== -->
+    <footer class="border-t border-gray-700 mt-12 py-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+            <p>&copy; 2025 Anime Clips Library. Created for editors and AMV makers.</p>
+        </div>
+    </footer>
+
+
+    <!-- ======================================== -->
+    <!-- ==== JAVASCRIPT LOGIC ==== -->
+    <!-- ======================================== -->
+    <script>
+        
+        // --- MOCK DATA ---
+        // In a real app, this would come from a database (e.g., Firestore) or API
+
+        const animeData = {
+            'Jujutsu Kaisen': {
+                poster: 'https://placehold.co/400x600/1a202c/73e8ff?text=Jujutsu+Kaisen',
+                description: 'A boy swallows a cursed talisman—the finger of a demon—and becomes cursed himself. He enters a shaman\'s school to be able to locate the demon\'s other body parts and thus exorcise himself.',
+                episodes: [
+                    { id: 1, title: 'Ryomen Sukuna' },
+                    { id: 2, title: 'For Myself' },
+                    { id: 3, title: 'Girl of Steel' },
+                    { id: 4, title: 'Curse Womb Must Die' }
+                ]
+            },
+            'Attack on Titan': {
+                poster: 'https://placehold.co/400x600/1a202c/73e8ff?text=Attack+on+Titan',
+                description: 'After his hometown is destroyed and his mother is killed, young Eren Jaeger vows to cleanse the earth of the giant humanoid Titans that have brought humanity to the brink of extinction.',
+                episodes: [
+                    { id: 1, title: 'To You, in 2000 Years' },
+                    { id: 2, title: 'That Day' },
+                    { id: 3, title: 'A Dim Light Amid Despair' }
+                ]
+            },
+            'Demon Slayer': {
+                poster: 'https://placehold.co/400x600/1a202c/73e8ff?text=Demon+Slayer',
+                description: 'A family is attacked by demons and only two members survive - Tanjiro and his sister Nezuko, who is turning into a demon. Tanjiro sets out to become a demon slayer to avenge his family and cure his sister.',
+                episodes: [
+                    { id: 1, title: 'Cruelty' },
+                    { id: 2, title: 'Trainer Sakonji Urokodaki' }
+                ]
+            },
+            'Spy x Family': {
+                poster: 'https://placehold.co/400x600/1a202c/73e8ff?text=Spy+x+Family',
+                description: 'A spy on an undercover mission gets married and adopts a child, not knowing that his wife is an assassin and his daughter is a telepath.',
+                episodes: [
+                    { id: 1, title: 'Operation Strix' },
+                    { id: 2, title: 'Secure a Wife' },
+                    { id: 3, title: 'Prepare for the Interview' }
+                ]
+            }
+        };
+
+        const clipData = {
+            // 'AnimeName_EpisodeID'
+            'Jujutsu Kaisen_1': [
+                { id: 1, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=JJK+Clip+1', time: '01:15 - 01:30', downloadUrl: '#' },
+                { id: 2, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=JJK+Clip+2', time: '03:45 - 04:00', downloadUrl: '#' },
+                { id: 3, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=JJK+Clip+3', time: '10:20 - 10:45', downloadUrl: '#' },
+                { id: 4, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=JJK+Clip+4', time: '21:05 - 21:30', downloadUrl: '#' }
+            ],
+            'Jujutsu Kaisen_2': [
+                { id: 1, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=JJK+Clip+5', time: '05:00 - 05:15', downloadUrl: '#' },
+                { id: 2, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=JJK+Clip+6', time: '15:30 - 16:00', downloadUrl: '#' }
+            ],
+            'Attack on Titan_1': [
+                { id: 1, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=AoT+Clip+1', time: '18:10 - 18:45', downloadUrl: '#' },
+                { id: 2, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=AoT+Clip+2', time: '22:00 - 22:30', downloadUrl: '#' }
+            ],
+            // Add more clip data as needed...
+        };
+
+
+        // --- PAGE NAVIGATION LOGIC ---
+
+        // Store the current anime for the "Back" button from clips page
+        let currentAnime = ''; 
+
+        /**
+         * Hides all pages and shows the one with the specified ID.
+         * @param {string} pageId - The ID of the page to show.
+         */
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            // Show the target page
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        /**
+         * Populates and displays the episode page for a given anime.
+         * @param {string} animeName - The name of the anime (must match animeData key).
+         */
+        function showAnime(animeName) {
+            currentAnime = animeName; // Store for back navigation
+            const data = animeData[animeName];
+            if (!data) return;
+
+            // Populate episode page
+            document.getElementById('anime-poster').src = data.poster;
+            document.getElementById('anime-title-header').innerText = animeName;
+            document.getElementById('anime-description').innerText = data.description;
+
+            // Populate episode list
+            const episodeListEl = document.getElementById('episode-list');
+            episodeListEl.innerHTML = ''; // Clear previous list
+            
+            data.episodes.forEach(ep => {
+                episodeListEl.innerHTML += `
+                    <div class="bg-gray-800 p-4 rounded-lg flex justify-between items-center cursor-pointer hover:bg-gray-700 transition-colors" 
+                         onclick="showClips('${animeName}', ${ep.id})">
+                        <span class="text-lg font-medium">Episode ${ep.id}: ${ep.title}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                `;
+            });
+
+            showPage('episode-page');
+        }
+
+        /**
+         * Populates and displays the clips page for a given episode.
+         * @param {string} animeName - The name of the anime.
+         * @param {number} episodeId - The ID of the episode.
+         */
+        function showClips(animeName, episodeId) {
+            const dataKey = `${animeName}_${episodeId}`;
+            const clips = clipData[dataKey] || []; // Get clips or empty array
+
+            // Set title
+            document.getElementById('clip-page-title').innerText = `${animeName} - Episode ${episodeId} Clips`;
+            
+            // Populate clips grid
+            const clipsGridEl = document.getElementById('clips-grid');
+            clipsGridEl.innerHTML = ''; // Clear previous clips
+
+            if (clips.length === 0) {
+                clipsGridEl.innerHTML = `<p class="text-gray-400 col-span-full">No clips found for this episode. Check back later!</p>`;
+            } else {
+                clips.forEach(clip => {
+                    clipsGridEl.innerHTML += `
+                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-all hover:shadow-blue-400/20">
+                            <img src="${clip.thumbnail}" alt="Clip ${clip.id} thumbnail" class="w-full h-40 object-cover">
+                            <div class="p-4">
+                                <p class="text-gray-300 mb-4">Timestamp: ${clip.time}</p>
+                                <a href="${clip.downloadUrl}" download="[${animeName}]_Ep${episodeId}_Clip${clip.id}.mp4" 
+                                   class="w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-block">
+                                    Download Clip
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // Show the page
+            showPage('clips-page');
+        }
+
+        /**
+         * Filters the anime on the home page based on search input.
+         */
+        function handleSearch() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const cards = document.querySelectorAll('.anime-card');
+            
+            cards.forEach(card => {
+                const title = card.dataset.title.toLowerCase();
+                if (title.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        /**
+         * Initial population of the home page grid on window load.
+         */
+        window.onload = function() {
+            const grid = document.getElementById('popular-anime-grid');
+            
+            for (const animeName in animeData) {
+                const data = animeData[animeName];
+                grid.innerHTML += `
+                    <div class="anime-card" data-title="${animeName}">
+                        <div class="bg-gray-800 rounded-lg overflow-hidden cursor-pointer shadow-lg hover:shadow-blue-400/20 hover:-translate-y-1 transition-all" 
+                             onclick="showAnime('${animeName}')">
+                            <img src="${data.poster}" alt="${animeName}" class="w-full h-48 sm:h-64 object-cover">
+                            <h3 class="font-semibold text-center p-3 truncate">${animeName}</h3>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Set the correct page on back/forward navigation
+            // (A simple way, real SPAs use History API)
+            showPage('home-page');
+        };
+
+    </script>
+</body>
+</html>
