@@ -3,373 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Clip Library</title>
-    <!-- 1. Tailwind CSS for styling -->
+    <title>Anime Clips Library - Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Material Symbols -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gray: { 900: '#0f172a', 950: '#020617' },
+                        brand: { 500: '#3b82f6', 600: '#2563eb' }
+                    },
+                    animation: { 'fade-in': 'fadeIn 0.5s ease-out forwards' }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* Custom styles */
-        html {
-            scroll-behavior: smooth;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Simple page navigation: hide all pages by default */
-        .page {
-            display: none;
-        }
-        /* Show the active page */
-        .page.active {
-            display: block;
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #020617; 
+            background-image: radial-gradient(circle at 50% -20%, #172554 0%, transparent 40%);
+            background-attachment: fixed;
+            color: #f1f5f9;
         }
         
-        /* Custom blue glow effect for focus */
-        .focus-glow:focus-within {
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-            border-color: rgba(59, 130, 246, 0.7);
+        /* Custom Utilities */
+        .text-glow { text-shadow: 0 0 20px rgba(59,130,246,0.5); }
+        
+        .search-input-wrapper:focus-within {
+            box-shadow: 0 0 20px -5px rgba(59,130,246,0.5);
+            border-color: rgba(59,130,246,0.6);
         }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .card-enter { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
+        
+        .material-symbols-rounded { font-size: 24px; vertical-align: middle; }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100">
+<body class="antialiased min-h-screen flex flex-col">
 
-    <!-- ==== HEADER / NAVIGATION ==== -->
-    <header class="bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-700">
-        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <a href="#" onclick="showPage('home-page')" class="text-2xl font-bold text-white">
-                <span class="text-blue-400">Anime</span>Clips
+    <!-- ==== HEADER ==== -->
+    <header class="sticky top-0 z-40 border-b border-white/10 bg-slate-950/70 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-950/50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
+            
+            <!-- LOGO -->
+            <a href="index.html" class="flex items-center gap-2 text-xl font-bold group">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                    <span class="material-symbols-rounded text-white text-sm">movie</span>
+                </div>
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+                    Anime<span class="text-blue-500">Clips</span>
+                </span>
             </a>
-            <button onclick="showPage('home-page')" class="text-gray-300 hover:text-white transition-colors">Home</button>
+
+            <!-- Nav Links -->
+            <div class="flex gap-6">
+                <a href="#" class="text-sm font-medium text-white border-b-2 border-blue-500 py-5">
+                    Home
+                </a>
+            </div>
         </nav>
     </header>
 
-    <!-- ==== MAIN CONTENT AREA ==== -->
-    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+    <!-- ==== MAIN CONTENT ==== -->
+    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-        <!-- ======================================== -->
-        <!-- ==== PAGE 1: HOME (Default View) ==== -->
-        <!-- ======================================== -->
-        <div id="home-page" class="page active">
+        <!-- Hero Section -->
+        <section class="text-center mb-12 relative">
+            <!-- Ambient Glow Behind Hero -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-blue-600/20 blur-[100px] -z-10 rounded-full pointer-events-none"></div>
+
+            <h1 class="text-4xl sm:text-6xl font-black text-white mb-4 tracking-tight text-glow leading-tight">
+                The Ultimate <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Editing Resource</span>
+            </h1>
+            <p class="text-lg text-slate-400 mb-8 max-w-2xl mx-auto leading-relaxed">
+                High-quality raw clips, 1080p resolution. <br>Designed for AMV editors and content creators.
+            </p>
             
-            <!-- Hero Section with Search -->
-            <section class="relative rounded-lg overflow-hidden mb-12">
-                <!-- Background Image Placeholder -->
-                <img src="https://placehold.co/1200x500/1a202c/73e8ff?text=Find+Your+Perfect+Clip" 
-                     alt="Anime compilation banner" 
-                     class="w-full h-64 sm:h-80 object-cover">
-                <div class="absolute inset-0 bg-black/60 flex flex-col justify-center items-center p-6 text-center">
-                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4">Find Your Perfect Anime Clip</h1>
-                    <p class="text-lg text-gray-300 mb-8 max-w-2xl">The ultimate library for AMV makers and anime editors. Search and download high-quality clips.</p>
-                    
-                    <!-- Search Bar -->
-                    <div class="w-full max-w-xl bg-white/10 backdrop-blur-sm rounded-full p-2 flex items-center border border-gray-600 focus-glow transition-all">
-                        <input type="search" 
-                               id="search-input"
-                               onkeyup="handleSearch()"
-                               placeholder="Search for an anime (e.g., 'Jujutsu Kaisen')" 
-                               class="w-full bg-transparent text-white placeholder-gray-400 outline-none px-4 py-2">
-                        <button onclick="handleSearch()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full px-6 py-2 transition-colors">
-                            Search
-                        </button>
+            <!-- Modern Search Bar -->
+            <div class="max-w-xl mx-auto relative z-20 group">
+                <div class="search-input-wrapper relative flex items-center bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-full p-2 transition-all duration-300">
+                    <span class="material-symbols-rounded text-slate-500 ml-4">search</span>
+                    <input 
+                        type="search" 
+                        id="search-input"
+                        onkeyup="handleSearch()"
+                        placeholder="Search anime (e.g., 'Hyouka', 'Jujutsu Kaisen')" 
+                        class="w-full bg-transparent text-white placeholder-slate-500 px-4 py-3 outline-none text-lg"
+                    >
+                    <div class="hidden sm:flex items-center pr-2">
+                        <span class="text-xs text-slate-600 border border-slate-700 rounded px-2 py-1 font-mono">CTRL+K</span>
                     </div>
                 </div>
-            </section>
-
-            <!-- Popular Anime Grid -->
-            <section>
-                <h2 class="text-2xl font-bold text-white mb-6">Popular Anime</h2>
-                <div id="popular-anime-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    <!-- Cards will be populated by mock data, but here's the structure -->
-                    <!-- 
-                    <div class="anime-card" data-title="Anime Title">
-                        <div class="bg-gray-800 rounded-lg overflow-hidden cursor-pointer shadow-lg hover:shadow-blue-400/20 hover:-translate-y-1 transition-all" onclick="showAnime('Anime Title')">
-                            <img src="https... (placeholder)" alt="Anime Title" class="w-full h-48 object-cover">
-                            <h3 class="font-semibold text-center p-3">Anime Title</h3>
-                        </div>
-                    </div>
-                    -->
-                </div>
-            </section>
-        </div>
-
-        <!-- ======================================== -->
-        <!-- ==== PAGE 2: EPISODE LIST ==== -->
-        <!-- ======================================== -->
-        <div id="episode-page" class="page">
-            <button onclick="showPage('home-page')" class="mb-6 inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                </svg>
-                Back to All Anime
-            </button>
-
-            <!-- Anime Details -->
-            <section class="flex flex-col md:flex-row gap-8 mb-12">
-                <img id="anime-poster" src="" alt="Anime Poster" class="w-full md:w-1/3 lg:w-1/4 h-auto object-cover rounded-lg shadow-lg">
-                <div class="flex-1">
-                    <h1 id="anime-title-header" class="text-4xl font-extrabold text-white mb-4"></h1>
-                    <p id="anime-description" class="text-gray-300 text-lg leading-relaxed"></p>
-                </div>
-            </section>
-
-            <!-- Episode List -->
-            <section>
-                <h2 class="text-2xl font-bold text-white mb-6">Select Episode</h2>
-                <div id="episode-list" class="space-y-3">
-                    <!-- Episode items will be populated by JS -->
-                    <!-- 
-                    <div class="bg-gray-800 p-4 rounded-lg flex justify-between items-center cursor-pointer hover:bg-gray-700 transition-colors" onclick="showClips('Anime Title', 1)">
-                        <span class="text-lg font-medium">Episode 1: Title of Episode</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    </div> 
-                    -->
-                </div>
-            </section>
-        </div>
-
-        <!-- ======================================== -->
-        <!-- ==== PAGE 3: CLIPS LIST ==== -->
-        <!-- ======================================== -->
-        <div id="clips-page" class="page">
-            <button onclick="showPage('episode-page')" class="mb-6 inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                </svg>
-                Back to Episodes
-            </button>
-
-            <h1 id="clip-page-title" class="text-3xl font-bold text-white mb-8"></h1>
-
-            <!-- Clips Grid -->
-            <div id="clips-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <!-- Clip cards will be populated by JS -->
-                <!-- 
-                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
-                    <img src="https... (placeholder)" alt="Clip thumbnail" class="w-full h-40 object-cover">
-                    <div class="p-4">
-                        <p class="text-gray-300 mb-4">Timestamp: 01:15 - 01:30</p>
-                        <a href="#" download class="w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-block">
-                            Download Clip
-                        </a>
-                    </div>
-                </div>
-                -->
             </div>
-        </div>
+        </section>
+
+        <!-- Anime Grid Section -->
+        <section>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                    <span class="material-symbols-rounded text-blue-500">trending_up</span>
+                    Trending Now
+                </h2>
+            </div>
+            
+            <!-- MODIFIED GRID: Reduced gap, closer elements -->
+            <div id="anime-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1.5 sm:gap-2">
+                <!-- Cards injected via JS -->
+            </div>
+            
+            <div id="no-results" class="hidden text-center py-20">
+                <p class="text-slate-400 text-lg">No anime found. Try a different keyword.</p>
+            </div>
+        </section>
 
     </main>
 
     <!-- ==== FOOTER ==== -->
-    <footer class="border-t border-gray-700 mt-12 py-8">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500">
-            <p>&copy; 2025 Anime Clips Library. Created for editors and AMV makers.</p>
+    <footer class="border-t border-white/5 bg-slate-950/30 mt-auto">
+        <div class="container mx-auto px-4 py-12">
+            <div class="flex flex-col items-center text-center">
+                <p class="text-slate-500 text-sm">&copy; 2025 Anime Clips Library.</p>
+            </div>
         </div>
     </footer>
 
-
-    <!-- ======================================== -->
-    <!-- ==== JAVASCRIPT LOGIC ==== -->
-    <!-- ======================================== -->
+    <!-- ========================= JS ========================= -->
     <script>
-        
-        // --- MOCK DATA ---
-        // In a real app, this would come from a database (e.g., Firestore) or API
-
-        const animeData = {
-            'Jujutsu Kaisen': {
-                poster: 'https://placehold.co/400x600/1a202c/73e8ff?text=Jujutsu+Kaisen',
-                description: 'A boy swallows a cursed talisman—the finger of a demon—and becomes cursed himself. He enters a shaman\'s school to be able to locate the demon\'s other body parts and thus exorcise himself.',
-                episodes: [
-                    { id: 1, title: 'Ryomen Sukuna' },
-                    { id: 2, title: 'For Myself' },
-                    { id: 3, title: 'Girl of Steel' },
-                    { id: 4, title: 'Curse Womb Must Die' }
-                ]
+        // Mock Data
+        const libraryData = [
+            {
+                title: 'Hyouka',
+                poster: 'https://th.bing.com/th/id/R.50d2437221c41665f5e49af7eb39da9b?rik=DeKj9eAWd3%2fMwg&riu=http%3a%2f%2fwww.anime-evo.net%2fwp-content%2fuploads%2f2012%2f09%2f13.jpg&ehk=yP9MpbHOg%2bC5lQKiZSknVeSU2tN3BxLawgYi6muIzqQ%3d&risl=&pid=ImgRaw&r=0',
+                clips: 30,
+                tags: ['Slice of Life', 'Mystery']
             },
-            'Attack on Titan': {
-                poster: 'https://placehold.co/400x600/1a202c/73e8ff?text=Attack+on+Titan',
-                description: 'After his hometown is destroyed and his mother is killed, young Eren Jaeger vows to cleanse the earth of the giant humanoid Titans that have brought humanity to the brink of extinction.',
-                episodes: [
-                    { id: 1, title: 'To You, in 2000 Years' },
-                    { id: 2, title: 'That Day' },
-                    { id: 3, title: 'A Dim Light Amid Despair' }
-                ]
+            {
+                title: 'Jujutsu Kaisen',
+                poster: 'https://www.comingsoon.net/wp-content/uploads/sites/3/2023/09/Jujutsu-Kaisen-Chapter-236-Release-Date.jpg',
+                clips: 45,
+                tags: ['Action', 'Supernatural']
             },
-            'Demon Slayer': {
-                poster: 'https://placehold.co/400x600/1a202c/73e8ff?text=Demon+Slayer',
-                description: 'A family is attacked by demons and only two members survive - Tanjiro and his sister Nezuko, who is turning into a demon. Tanjiro sets out to become a demon slayer to avenge his family and cure his sister.',
-                episodes: [
-                    { id: 1, title: 'Cruelty' },
-                    { id: 2, title: 'Trainer Sakonji Urokodaki' }
-                ]
+            {
+                title: 'Attack on Titan',
+                poster: 'https://th.bing.com/th/id/R.1aa6aef70d6fa47d0e3cbc366313d074?rik=Pi5pMtvBFDX%2bdw&riu=http%3a%2f%2fctrlgeekgirl.files.wordpress.com%2f2013%2f11%2fattackontitan-1.jpg&ehk=blVHthF5d6rE8lJCM1Kh%2bgG5ZbAoddey1TNMWPW2%2fIo%3d&risl=&pid=ImgRaw&r=0',
+                clips: 112,
+                tags: ['Dark', 'War']
             },
-            'Spy x Family': {
-                poster: 'https://placehold.co/400x600/1a202c/73e8ff?text=Spy+x+Family',
-                description: 'A spy on an undercover mission gets married and adopts a child, not knowing that his wife is an assassin and his daughter is a telepath.',
-                episodes: [
-                    { id: 1, title: 'Operation Strix' },
-                    { id: 2, title: 'Secure a Wife' },
-                    { id: 3, title: 'Prepare for the Interview' }
-                ]
+            {
+                title: 'Demon Slayer',
+                poster: 'https://tse1.mm.bing.net/th/id/OIP.HEPFkoMS4vdddBpx6tLJ-wHaEK?rs=1&pid=ImgDetMain&o=7&rm=3',
+                clips: 89,
+                tags: ['Historical', 'Fantasy']
+            },
+            {
+                title: 'Spy x Family',
+                poster: 'https://img1.ak.crunchyroll.com/i/spire3/11b38d26e15859569eaa2b57d608edc81656560061_main.jpg',
+                clips: 25,
+                tags: ['Comedy', 'Espionage']
+            },
+            {
+                title: 'Chainsaw Man',
+                poster: 'https://images3.alphacoders.com/128/thumb-1920-1287354.png',
+                clips: 15,
+                tags: ['Gore', 'Dark Fantasy']
             }
-        };
+        ];
 
-        const clipData = {
-            // 'AnimeName_EpisodeID'
-            'Jujutsu Kaisen_1': [
-                { id: 1, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=JJK+Clip+1', time: '01:15 - 01:30', downloadUrl: '#' },
-                { id: 2, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=JJK+Clip+2', time: '03:45 - 04:00', downloadUrl: '#' },
-                { id: 3, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=JJK+Clip+3', time: '10:20 - 10:45', downloadUrl: '#' },
-                { id: 4, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=JJK+Clip+4', time: '21:05 - 21:30', downloadUrl: '#' }
-            ],
-            'Jujutsu Kaisen_2': [
-                { id: 1, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=JJK+Clip+5', time: '05:00 - 05:15', downloadUrl: '#' },
-                { id: 2, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=JJK+Clip+6', time: '15:30 - 16:00', downloadUrl: '#' }
-            ],
-            'Attack on Titan_1': [
-                { id: 1, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=AoT+Clip+1', time: '18:10 - 18:45', downloadUrl: '#' },
-                { id: 2, thumbnail: 'https://placehold.co/320x180/1a202c/73e8ff?text=AoT+Clip+2', time: '22:00 - 22:30', downloadUrl: '#' }
-            ],
-            // Add more clip data as needed...
-        };
+        const gridEl = document.getElementById('anime-grid');
+        const searchInput = document.getElementById('search-input');
+        const noResults = document.getElementById('no-results');
 
-
-        // --- PAGE NAVIGATION LOGIC ---
-
-        // Store the current anime for the "Back" button from clips page
-        let currentAnime = ''; 
-
-        /**
-         * Hides all pages and shows the one with the specified ID.
-         * @param {string} pageId - The ID of the page to show.
-         */
-        function showPage(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            // Show the target page
-            const targetPage = document.getElementById(pageId);
-            if (targetPage) {
-                targetPage.classList.add('active');
-            }
-            // Scroll to top
-            window.scrollTo(0, 0);
-        }
-
-        /**
-         * Populates and displays the episode page for a given anime.
-         * @param {string} animeName - The name of the anime (must match animeData key).
-         */
-        function showAnime(animeName) {
-            currentAnime = animeName; // Store for back navigation
-            const data = animeData[animeName];
-            if (!data) return;
-
-            // Populate episode page
-            document.getElementById('anime-poster').src = data.poster;
-            document.getElementById('anime-title-header').innerText = animeName;
-            document.getElementById('anime-description').innerText = data.description;
-
-            // Populate episode list
-            const episodeListEl = document.getElementById('episode-list');
-            episodeListEl.innerHTML = ''; // Clear previous list
+        function renderCards(data) {
+            gridEl.innerHTML = '';
             
-            data.episodes.forEach(ep => {
-                episodeListEl.innerHTML += `
-                    <div class="bg-gray-800 p-4 rounded-lg flex justify-between items-center cursor-pointer hover:bg-gray-700 transition-colors" 
-                         onclick="showClips('${animeName}', ${ep.id})">
-                        <span class="text-lg font-medium">Episode ${ep.id}: ${ep.title}</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                `;
-            });
-
-            showPage('episode-page');
-        }
-
-        /**
-         * Populates and displays the clips page for a given episode.
-         * @param {string} animeName - The name of the anime.
-         * @param {number} episodeId - The ID of the episode.
-         */
-        function showClips(animeName, episodeId) {
-            const dataKey = `${animeName}_${episodeId}`;
-            const clips = clipData[dataKey] || []; // Get clips or empty array
-
-            // Set title
-            document.getElementById('clip-page-title').innerText = `${animeName} - Episode ${episodeId} Clips`;
-            
-            // Populate clips grid
-            const clipsGridEl = document.getElementById('clips-grid');
-            clipsGridEl.innerHTML = ''; // Clear previous clips
-
-            if (clips.length === 0) {
-                clipsGridEl.innerHTML = `<p class="text-gray-400 col-span-full">No clips found for this episode. Check back later!</p>`;
+            if (data.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
             } else {
-                clips.forEach(clip => {
-                    clipsGridEl.innerHTML += `
-                        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg transition-all hover:shadow-blue-400/20">
-                            <img src="${clip.thumbnail}" alt="Clip ${clip.id} thumbnail" class="w-full h-40 object-cover">
-                            <div class="p-4">
-                                <p class="text-gray-300 mb-4">Timestamp: ${clip.time}</p>
-                                <a href="${clip.downloadUrl}" download="[${animeName}]_Ep${episodeId}_Clip${clip.id}.mp4" 
-                                   class="w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors inline-block">
-                                    Download Clip
-                                </a>
-                            </div>
-                        </div>
-                    `;
-                });
+                noResults.classList.add('hidden');
             }
 
-            // Show the page
-            showPage('clips-page');
-        }
-
-        /**
-         * Filters the anime on the home page based on search input.
-         */
-        function handleSearch() {
-            const query = document.getElementById('search-input').value.toLowerCase();
-            const cards = document.querySelectorAll('.anime-card');
-            
-            cards.forEach(card => {
-                const title = card.dataset.title.toLowerCase();
-                if (title.includes(query)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
+            data.forEach((anime, index) => {
+                const delay = index * 50; 
+                const encodedName = encodeURIComponent(anime.title);
+                
+                gridEl.innerHTML += `
+                    <div class="card-enter" style="animation-delay: ${delay}ms">
+                        <!-- MODIFIED CARD: Square corners, no lift, subtle zoom -->
+                        <a href="anime.html?name=${encodedName}" class="group relative block w-full aspect-4-3 overflow-hidden bg-slate-800 hover:z-10">
+                            
+                            <!-- Image: Zoom changed from scale-110 to scale-105 -->
+                            <img src="${anime.poster}" alt="${anime.title}" 
+                                 class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 group-hover:brightness-110">
+                            
+                            <!-- Gradient Overlay -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                            
+                            <!-- Content (Bottom) -->
+                            <div class="absolute bottom-0 left-0 w-full p-4 z-20">
+                                <!-- Tags -->
+                                <div class="flex gap-1 mb-1 opacity-90 flex-wrap">
+                                    <span class="text-[9px] font-bold text-blue-300 uppercase tracking-wider bg-blue-900/40 px-1.5 py-0.5">
+                                        ${anime.tags[0]}
+                                    </span>
+                                    ${anime.tags[1] ? `<span class="text-[9px] text-slate-300 bg-black/40 px-1.5 py-0.5 uppercase tracking-wider">${anime.tags[1]}</span>` : ''}
+                                </div>
+                                
+                                <!-- Title -->
+                                <h3 class="text-xl font-black text-white leading-tight drop-shadow-md group-hover:text-blue-400 transition-colors">
+                                    ${anime.title}
+                                </h3>
+                            </div>
+                            
+                            <!-- Top Right Badge (Clip count) -->
+                            <div class="absolute top-2 right-2 bg-black/60 backdrop-blur text-white text-[10px] font-mono px-2 py-0.5">
+                                ${anime.clips} Clips
+                            </div>
+                        </a>
+                    </div>
+                `;
             });
         }
 
-        /**
-         * Initial population of the home page grid on window load.
-         */
-        window.onload = function() {
-            const grid = document.getElementById('popular-anime-grid');
-            
-            for (const animeName in animeData) {
-                const data = animeData[animeName];
-                grid.innerHTML += `
-                    <div class="anime-card" data-title="${animeName}">
-                        <div class="bg-gray-800 rounded-lg overflow-hidden cursor-pointer shadow-lg hover:shadow-blue-400/20 hover:-translate-y-1 transition-all" 
-                             onclick="showAnime('${animeName}')">
-                            <img src="${data.poster}" alt="${animeName}" class="w-full h-48 sm:h-64 object-cover">
-                            <h3 class="font-semibold text-center p-3 truncate">${animeName}</h3>
-                        </div>
-                    </div>
-                `;
+        function handleSearch() {
+            const query = searchInput.value.toLowerCase();
+            const filtered = libraryData.filter(anime => 
+                anime.title.toLowerCase().includes(query)
+            );
+            renderCards(filtered);
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
             }
+        });
 
-            // Set the correct page on back/forward navigation
-            // (A simple way, real SPAs use History API)
-            showPage('home-page');
-        };
+        window.onload = () => renderCards(libraryData);
 
     </script>
 </body>

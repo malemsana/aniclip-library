@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Clips - Pro Library</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gray: { 900: '#0f172a', 950: '#020617' }
+                    },
+                    animation: { 'spin-slow': 'spin 3s linear infinite' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* GLOBAL */
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #020617;
+            background-image: radial-gradient(circle at 50% 0%, #1e3a8a 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+        .aspect-16-9 { aspect-ratio: 16 / 9; }
+        .aspect-4-3 { aspect-ratio: 4 / 3; }
+        .material-symbols-rounded { font-size: 24px; }
+
+        /* MODAL */
+        #preview-modal { visibility: hidden; opacity: 0; transition: all 0.2s ease-out; }
+        #preview-modal.active { visibility: visible; opacity: 1; }
+
+        /* THUMBNAIL SLIDER */
+        .thumbnail-slider::-webkit-scrollbar { height: 4px; }
+        .thumbnail-slider::-webkit-scrollbar-track { background: #1e293b; }
+        .thumbnail-slider::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        .thumbnail-slider .active-thumbnail { outline: 2px solid #3b82f6; opacity: 1; filter: brightness(1.2); }
+        .fade-in { animation: fadeIn 0.5s ease-in-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="text-slate-100 antialiased min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-40 border-b border-white/10 bg-slate-950/70 backdrop-blur-lg">
+        <nav class="container mx-auto px-4 h-16 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2 text-xl font-bold">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><span class="material-symbols-rounded text-sm">movie</span></div>
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">Anime<span class="text-blue-500">Clips</span></span>
+            </a>
+            <a href="index.html" class="text-sm font-medium text-slate-400 hover:text-white transition-colors flex items-center gap-1">
+                <span class="material-symbols-rounded text-[18px]">home</span> Home
+            </a>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow container mx-auto p-4 sm:p-6 lg:p-8">
+        <a href="index.html" class="inline-flex items-center text-slate-400 hover:text-blue-400 mb-6 text-sm transition-colors">
+            <span class="material-symbols-rounded text-lg mr-1">arrow_back</span> Back to Library
+        </a>
+
+        <!-- Hero Panel -->
+        <section id="anime-info-panel" class="relative rounded-2xl overflow-hidden mb-12 border border-white/10 shadow-2xl bg-slate-900/40 min-h-[250px]">
+            <!-- JS Content -->
+        </section>
+
+        <div id="skeleton-loader" class="hidden grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-0.5">
+            <!-- Visual placeholder for loading -->
+        </div>
+
+        <section id="clips-by-episode-section" class="fade-in"></section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-white/10 mt-12 py-8 bg-slate-950/50 text-center text-slate-500 text-sm">
+        <p>&copy; 2025 Anime Clips Library.</p>
+    </footer>
+
+    <!-- ======================================== -->
+    <!-- ==== NEW "THEATER MODE" PREVIEW ==== -->
+    <!-- ======================================== -->
+    <div id="preview-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        
+        <!-- Main Layout Container -->
+        <div class="relative w-full max-w-7xl h-[90vh] md:h-auto bg-slate-900 rounded-xl overflow-hidden border border-slate-700 shadow-2xl flex flex-col lg:flex-row">
+            
+            <!-- CLOSE BTN (Mobile: Top Right, Desktop: Absolute outside or top-right inner) -->
+            <button onclick="closePreview()" class="absolute top-2 right-2 lg:top-4 lg:right-4 z-50 bg-black/50 hover:bg-red-500/80 text-white p-1 rounded-full transition-colors">
+                <span class="material-symbols-rounded">close</span>
+            </button>
+
+            <!-- === LEFT COLUMN: Video & Timeline === -->
+            <div class="w-full lg:w-[70%] bg-black flex flex-col">
+                <!-- Video Player Wrapper -->
+                <div class="relative w-full flex-grow flex items-center justify-center bg-black">
+                    <video id="video-player" class="w-full max-h-[65vh] aspect-16-9 object-contain" controls autoplay playsinline></video>
+                    
+                    <!-- Video Navigation Overlays -->
+                    <button id="prev-clip-btn" class="absolute left-0 h-full w-20 flex items-center justify-start pl-2 hover:bg-gradient-to-r from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity disabled:hidden">
+                        <span class="material-symbols-rounded text-4xl text-white drop-shadow-md">chevron_left</span>
+                    </button>
+                    <button id="next-clip-btn" class="absolute right-0 h-full w-20 flex items-center justify-end pr-2 hover:bg-gradient-to-l from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity disabled:hidden">
+                        <span class="material-symbols-rounded text-4xl text-white drop-shadow-md">chevron_right</span>
+                    </button>
+                </div>
+
+                <!-- Thumbnail Strip -->
+                <div class="h-24 bg-slate-950 border-t border-white/10 flex flex-col justify-center">
+                    <div id="thumbnail-slider" class="thumbnail-slider flex gap-2 overflow-x-auto px-4 py-2 snap-x items-center">
+                        <!-- Thumbnails via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- === RIGHT COLUMN: Details & Actions === -->
+            <div class="w-full lg:w-[30%] bg-slate-900 p-6 lg:p-8 flex flex-col border-l border-slate-800 overflow-y-auto">
+                
+                <!-- File Badge -->
+                <div class="mb-2 flex items-center gap-2">
+                    <span class="bg-blue-600/20 text-blue-400 text-[10px] font-bold px-2 py-1 rounded border border-blue-500/30 uppercase tracking-wider">MKV Source</span>
+                    <span id="preview-badge-quality" class="bg-emerald-600/20 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded border border-emerald-500/30 uppercase tracking-wider hidden">1080p</span>
+                </div>
+
+                <!-- Filename -->
+                <h3 id="preview-filename" class="text-lg md:text-xl font-bold text-white break-words leading-snug mb-6 font-mono">
+                    filename_placeholder.mkv
+                </h3>
+
+                <!-- Metadata Table -->
+                <div class="text-sm text-slate-400 space-y-3 mb-8 bg-slate-800/50 p-4 rounded-lg">
+                    <div class="flex justify-between border-b border-white/5 pb-2">
+                        <span>Duration</span>
+                        <span id="preview-duration" class="text-slate-200 font-mono">--:--</span>
+                    </div>
+                    <div class="flex justify-between border-b border-white/5 pb-2">
+                        <span>Episode</span>
+                        <span id="preview-episode" class="text-slate-200">Ep 01</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Format</span>
+                        <span class="text-slate-200">Matroska (.mkv)</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons Area -->
+                <div class="mt-auto space-y-3">
+                    <a id="video-download-btn" href="#" download class="block w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white text-center rounded-lg font-semibold transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 group">
+                        <span class="material-symbols-rounded group-hover:-translate-y-1 transition-transform">download</span>
+                        Download Clip
+                    </a>
+                    
+                    <button onclick="copyClipLink()" class="w-full py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg font-medium transition-all border border-slate-700 flex items-center justify-center gap-2 relative">
+                        <span class="material-symbols-rounded text-sm">link</span>
+                        <span id="copy-btn-text">Copy Link</span>
+                        
+                        <!-- Simple inline toast success message inside button logic -->
+                        <div id="copy-success-msg" class="absolute inset-0 bg-emerald-600 text-white flex items-center justify-center rounded-lg opacity-0 pointer-events-none transition-opacity font-bold">
+                            <span class="material-symbols-rounded mr-1">check</span> Copied!
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- DATA & LOGIC ---
+
+        // Helper Data
+        const getRandomDuration = () => {
+            const m = Math.floor(Math.random() * 2);
+            const s = Math.floor(Math.random() * 50) + 10;
+            return `${m}:${s}`;
+        };
+
+        const rawClipUrls = [
+            { name: "hyouka_S01_E01_C0028", url: "https://vidplay.io/stream/85twA_uC5IaQywnmwf2-4w", thumb: "https://i.ibb.co/rfZzBS6c/142899078d7c.jpg", quality: "1080p" },
+            { name: "hyouka_S01_E01_C0035", url: "https://vidplay.io/stream/AAExF1xJPVrl43H8_w7Q6Q", thumb: "https://i.ibb.co/qL9JngCW/c193c82d6029.jpg", quality: "720p" },
+            { name: "hyouka_S01_E01_C0031", url: "https://vidplay.io/stream/KEc2Ld-Iy-bwX07ElGIj6g", thumb: "https://i.ibb.co/mV21gwdq/28ab8819c96f.jpg", quality: "1080p" },
+            { name: "hyouka_S01_E01_C0023", url: "https://vidplay.io/stream/kgYsYBNcqE6st5boxdbuNA", thumb: "https://i.ibb.co/7N1fy7Ts/1d39b1aae68c.jpg", quality: "1080p" },
+            { name: "hyouka_S01_E01_C0006", url: "https://vidplay.io/stream/FIOZlTeLZUutMy7R46cuzA", thumb: "https://i.ibb.co/fVvGJHrj/72ff73d945f5.jpg" },
+            { name: "hyouka_S01_E01_C0007", url: "https://vidplay.io/stream/oCZ2ntAnQK65t-5z14VoeQ", thumb: "https://i.ibb.co/mF9JKZMt/de7afa7558cb.jpg" },
+            { name: "hyouka_S01_E01_C0024", url: "https://vidplay.io/stream/pUG7OobP_H71tRuwuha2OA", thumb: "https://i.ibb.co/9kKsSP9F/a341cbbbe5c6.jpg", quality: "4K" },
+            { name: "hyouka_S01_E01_C0034", url: "https://vidplay.io/stream/VGMfdI-w5WIq03JBtMtAzw", thumb: "https://i.ibb.co/1JY8yJ0F/f3a304d04ab0.jpg" },
+            { name: "hyouka_S01_E01_C0027", url: "https://vidplay.io/stream/gf7bDsVk2Zxd4_UqMwO1DA", thumb: "https://i.ibb.co/605VpX5g/785573f3a982.jpg" },
+            { name: "hyouka_S01_E01_C0009", url: "https://vidplay.io/stream/d3bS3fFymsYDA9uTPVmXJQ", thumb: "https://i.ibb.co/JWhDF8gC/0fca0eca4b17.jpg" },
+            { name: "hyouka_S01_E01_C0020", url: "https://vidplay.io/stream/eliR2EkLeF8AQMHJEQ96bg", thumb: "https://i.ibb.co/Pvskq7Jy/a6a5e263e82b.jpg" },
+            { name: "hyouka_S01_E01_C0010", url: "https://vidplay.io/stream/E6HO6NJvpwEquuBuu4JBlg", thumb: "https://i.ibb.co/jn5sWjw/417c0b4315b0.jpg" },
+            { name: "hyouka_S01_E01_C0019", url: "https://vidplay.io/stream/GXVxSgy-PWVu1laS5JJyNA", thumb: "https://i.ibb.co/B2QWy0BH/68d31dd870bd.jpg" },
+            { name: "hyouka_S01_E01_C0033", url: "https://vidplay.io/stream/LdAS9HMaeSHP6lkZonEqIQ", thumb: "https://i.ibb.co/8DBsPSyr/522b1fa9b2db.jpg" },
+            { name: "hyouka_S01_E01_C0021", url: "https://vidplay.io/stream/M9W9toA9IHYxDSIaJkC5wA", thumb: "https://i.ibb.co/Zzh79kvq/c0e2958ade4d.jpg" },
+            { name: "hyouka_S01_E01_C0016", url: "https://vidplay.io/stream/GlYuD_-XkANOGNAAopHZPg", thumb: "https://i.ibb.co/7dVHWtys/78f1c2998361.jpg" },
+            { name: "hyouka_S01_E01_C0013", url: "https://vidplay.io/stream/hIQecm0Q234lLY0FFTt1vw", thumb: "https://i.ibb.co/Fb9PsN7s/6cccf93a4185.jpg" },
+            { name: "hyouka_S01_E01_C0029", url: "https://vidplay.io/stream/7VUI2GmWx6Xy1HWifuMevA", thumb: "https://i.ibb.co/fzWQqtKB/83469cc68d5c.jpg" },
+            { name: "hyouka_S01_E01_C0032", url: "https://vidplay.io/stream/faDP9bd9cmFUguvZalO7DA", thumb: "https://i.ibb.co/k2b34TRy/c102418e33c5.jpg" },
+            { name: "hyouka_S01_E01_C0008", url: "https://vidplay.io/stream/5sdcJBJZMmrRFEbemvORVw", thumb: "https://i.ibb.co/mF6y7zfh/7208089c2855.jpg" },
+            { name: "hyouka_S01_E01_C0026", url: "https://vidplay.io/stream/SnIxCiiUi4XkZuVCCUG6Vw", thumb: "https://i.ibb.co/ZpV70tGJ/3f856374ab2e.jpg" },
+            { name: "hyouka_S01_E01_C0011", url: "https://vidplay.io/stream/7VsiWyavB0w9OghFz5Ofow", thumb: "https://i.ibb.co/VKKzRV7/3bafab538ea7.jpg" },
+            { name: "hyouka_S01_E01_C0022", url: "https://vidplay.io/stream/vLpdNf8bMRquEotJ3FNwew", thumb: "https://i.ibb.co/LdvGh4gV/f8b97598e321.jpg" },
+            { name: "hyouka_S01_E01_C0025", url: "https://vidplay.io/stream/350cKocLMMsm3MvK-QZMow", thumb: "https://i.ibb.co/KpDZyW2T/ebb756f044ae.jpg" },
+            { name: "hyouka_S01_E01_C0017", url: "https://vidplay.io/stream/xjC0sTbY172lH1npgs9ebw", thumb: "https://i.ibb.co/BHxq6sFv/24e3d1a15fef.jpg" },
+            { name: "hyouka_S01_E01_C0018", url: "https://vidplay.io/stream/kTlkNn4mXY-__F40Ude9GA", thumb: "https://i.ibb.co/ymrzDBQ6/d502916ca01d.jpg" },
+            { name: "hyouka_S01_E01_C0030", url: "https://vidplay.io/stream/6r1kA2EQBMWeyJPn3D5Vgw", thumb: "https://i.ibb.co/RGr72XYX/ffd445f022b8.jpg" },
+            { name: "hyouka_S01_E01_C0014", url: "https://vidplay.io/stream/OK1KQYBnJQiM9QIkT08nvg", thumb: "https://i.ibb.co/BHQP6Qqf/88c44bc9db64.jpg" },
+            { name: "hyouka_S01_E01_C0012", url: "https://vidplay.io/stream/1E5fZwZEC7Q8L7cIGyr2yA", thumb: "https://i.ibb.co/362L6FB/dd853b1dbc85.jpg" },
+            { name: "hyouka_S01_E01_C0015", url: "https://vidplay.io/stream/El0ODy0eda9FB_gnLMgCNA", thumb: "https://i.ibb.co/rRYrFfNL/0d9991f940e4.jpg" }
+        ];
+
+        const animeData = {
+            'Hyouka': {
+                screenshot: 'https://th.bing.com/th/id/R.50d2437221c41665f5e49af7eb39da9b?rik=DeKj9eAWd3%2fMwg&riu=http%3a%2f%2fwww.anime-evo.net%2fwp-content%2fuploads%2f2012%2f09%2f13.jpg&ehk=yP9MpbHOg%2bC5lQKiZSknVeSU2tN3BxLawgYi6muIzqQ%3d&risl=&pid=ImgRaw&r=0',
+                tags: ['Mystery', 'School', 'Slice of Life', 'Kyoto Animation'],
+                episodes: [{ id: 1, title: 'The Revival of the Traditional Classic Lit Club' }]
+            },
+            // Keep other dummy data to avoid errors
+            'Jujutsu Kaisen': { screenshot: '...', tags: [], episodes: [] }
+        };
+
+        const clipData = {
+            'Hyouka_1': rawClipUrls.map(c => ({
+                video_name: c.name + ".mkv",
+                direct_url: c.url,
+                thumbnail: c.thumb,
+                duration: getRandomDuration(),
+                quality: c.quality || ''
+            }))
+        };
+
+        // --- DOM ELEMENTS ---
+        const modal = document.getElementById('preview-modal');
+        const videoPlayer = document.getElementById('video-player');
+        const slider = document.getElementById('thumbnail-slider');
+        
+        // Detail Panel Elements
+        const filenameEl = document.getElementById('preview-filename');
+        const durationEl = document.getElementById('preview-duration');
+        const badgeEl = document.getElementById('preview-badge-quality');
+        const downloadBtn = document.getElementById('video-download-btn');
+        
+        // Init
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const animeName = urlParams.get('name');
+            const infoPanel = document.getElementById('anime-info-panel');
+            const clipsSection = document.getElementById('clips-by-episode-section');
+            const loader = document.getElementById('skeleton-loader');
+
+            if (!animeName || !animeData[animeName]) {
+                infoPanel.innerHTML = `<div class="text-center text-red-400 p-10">Anime not found</div>`;
+                return;
+            }
+
+            const data = animeData[animeName];
+            document.title = `${animeName} | Pro Library`;
+            
+            renderSkeleton(loader);
+            renderHeroPanel(infoPanel, animeName, data);
+            
+            setTimeout(() => {
+                loader.style.display = 'none';
+                renderClips(clipsSection, animeName, data.episodes);
+            }, 300);
+        };
+
+        // RENDER HELPERS
+        function renderSkeleton(container) {
+            container.style.display = 'grid';
+            container.innerHTML = new Array(12).fill(`<div class="aspect-16-9 bg-slate-800/50 animate-pulse"></div>`).join('');
+        }
+
+        function renderHeroPanel(container, title, data) {
+            container.innerHTML = `
+                <div class="absolute inset-0 z-0"><img src="${data.screenshot}" class="w-full h-full object-cover opacity-30 blur-xl"></div>
+                <div class="absolute inset-0 z-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-transparent"></div>
+                <div class="relative z-10 p-6 md:p-8 flex flex-col md:flex-row gap-6 items-end h-full">
+                    <img src="${data.screenshot}" class="w-32 md:w-48 rounded shadow-2xl border border-white/10 aspect-4-3 object-cover">
+                    <div class="flex-1 mb-2">
+                        <div class="flex gap-2 mb-2 flex-wrap text-xs font-bold tracking-wider text-blue-400 uppercase">
+                            ${data.tags.map(t => `<span>${t}</span>`).join('<span class="opacity-50">•</span>')}
+                        </div>
+                        <h1 class="text-3xl md:text-5xl font-black text-white leading-tight">${title}</h1>
+                        <p class="text-slate-300 mt-2 font-medium">${data.episodes.length} Episode(s) Available</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderClips(container, animeName, episodes) {
+            episodes.forEach(ep => {
+                const animeKey = `${animeName}_${ep.id}`;
+                const clips = clipData[animeKey] || [];
+                if (clips.length > 0) {
+                    container.innerHTML += `
+                        <div class="mb-8">
+                            <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-3"><span class="w-1 h-6 bg-blue-600 rounded-full block"></span> ${ep.title}</h2>
+                            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-[2px] bg-slate-900 border border-slate-800 rounded-lg overflow-hidden">
+                                ${clips.map((clip, idx) => `
+                                    <div class="relative group cursor-pointer overflow-hidden bg-black aspect-16-9" onclick="openPreview('${animeKey}', ${idx})">
+                                        <img src="${clip.thumbnail}" loading="lazy" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
+                                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200"><span class="material-symbols-rounded text-4xl text-white drop-shadow-lg scale-90 group-hover:scale-100 transition-transform">play_circle</span></div>
+                                        ${clip.quality ? `<span class="absolute top-1 left-1 bg-blue-600 text-white text-[9px] font-bold px-1 rounded shadow-md z-10">${clip.quality}</span>` : ''}
+                                        <span class="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] font-mono px-1 rounded z-10">${clip.duration}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        // MODAL FUNCTIONS
+        function openPreview(animeKey, idx) {
+            const clips = clipData[animeKey];
+            slider.innerHTML = clips.map((c, i) => `
+                <div class="relative flex-shrink-0 cursor-pointer snap-center group" onclick="loadClip('${animeKey}', ${i})">
+                    <img src="${c.thumbnail}" class="h-16 w-28 object-cover rounded opacity-50 group-hover:opacity-100 hover:scale-105 transition-all border border-transparent group-hover:border-blue-500">
+                </div>
+            `).join('');
+            loadClip(animeKey, idx);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreview() {
+            modal.classList.remove('active');
+            videoPlayer.pause();
+            videoPlayer.removeAttribute('src');
+            document.body.style.overflow = 'auto';
+        }
+
+        function loadClip(animeKey, idx) {
+            const clip = clipData[animeKey][idx];
+            
+            // Update Left Panel (Video)
+            videoPlayer.src = clip.direct_url;
+            const savedVol = localStorage.getItem('ac_vol');
+            if (savedVol) videoPlayer.volume = parseFloat(savedVol);
+            
+            // Update Right Panel (Details)
+            filenameEl.textContent = clip.video_name;
+            durationEl.textContent = clip.duration;
+            
+            // Quality Badge Toggle
+            if(clip.quality) {
+                badgeEl.textContent = clip.quality;
+                badgeEl.classList.remove('hidden');
+            } else {
+                badgeEl.classList.add('hidden');
+            }
+
+            // Actions
+            downloadBtn.href = clip.direct_url;
+            downloadBtn.download = clip.video_name;
+
+            // Navigation State
+            const thumbs = slider.querySelectorAll('img');
+            thumbs.forEach((t, i) => {
+                if (i === idx) {
+                    t.classList.add('active-thumbnail', 'opacity-100');
+                    t.scrollIntoView({behavior: 'smooth', inline: 'center'});
+                } else t.classList.remove('active-thumbnail', 'opacity-100');
+            });
+
+            const prev = document.getElementById('prev-clip-btn');
+            const next = document.getElementById('next-clip-btn');
+            
+            prev.disabled = idx === 0;
+            prev.onclick = () => loadClip(animeKey, idx - 1);
+            next.disabled = idx === clipData[animeKey].length - 1;
+            next.onclick = () => loadClip(animeKey, idx + 1);
+        }
+
+        // Helper Functions
+        videoPlayer.addEventListener('volumechange', () => localStorage.setItem('ac_vol', videoPlayer.volume));
+        
+        function copyClipLink() {
+            if(videoPlayer.src) {
+                navigator.clipboard.writeText(videoPlayer.src).then(() => {
+                    const msg = document.getElementById('copy-success-msg');
+                    msg.classList.replace('opacity-0', 'opacity-100');
+                    setTimeout(() => msg.classList.replace('opacity-100', 'opacity-0'), 1500);
+                });
+            }
+        }
+        
+        // Close on backdrop click or Esc
+        modal.addEventListener('click', e => e.target === modal && closePreview());
+        document.addEventListener('keydown', e => e.key === 'Escape' && closePreview());
+    </script>
+</body>
+</html>
